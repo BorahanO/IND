@@ -1,16 +1,13 @@
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
 {
-    [SerializeField] private float currentSpeed = 0f;
-
-    [SerializeField] private float moveSpeed;
-    [SerializeField] private float acceleration;
-    [SerializeField] private float deceleration;
+    public float acceleration = 1f; // Rate at which player accelerates
+    public float maxSpeed = 5f; // Maximum speed of the player
+    public float deceleration = 0.5f; // Rate at which player decelerates
 
     private Rigidbody2D rb;
-    private Vector2 moveInput;
-    
+
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -18,19 +15,27 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        moveInput.x = Input.GetAxisRaw("Horizontal");
-        moveInput.y = Input.GetAxisRaw("Vertical");
-        moveInput.Normalize();
+        float horizontalInput = Input.GetAxisRaw("Horizontal");
+        float verticalInput = Input.GetAxisRaw("Vertical");
 
-        if (moveInput.magnitude > 0)
+        Vector2 inputVector = new Vector2(horizontalInput, verticalInput).normalized;
+
+        if (inputVector != Vector2.zero)
         {
-            currentSpeed = Mathf.MoveTowards(currentSpeed, moveSpeed, acceleration * Time.deltaTime);
+            // Rotate towards movement direction
+            float angle = Mathf.Atan2(inputVector.y, inputVector.x) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+
+            // Accelerate in the input direction
+            rb.velocity += inputVector * acceleration * Time.deltaTime;
+
+            // Clamp velocity to the maximum speed
+            rb.velocity = Vector2.ClampMagnitude(rb.velocity, maxSpeed);
         }
         else
         {
-            currentSpeed = Mathf.MoveTowards(currentSpeed, 0f, deceleration * Time.deltaTime);
+            // Decelerate when no input is given
+            rb.velocity -= rb.velocity * deceleration * Time.deltaTime;
         }
-
-        rb.velocity = moveInput * currentSpeed;
     }
 }
