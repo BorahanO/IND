@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public float acceleration = 1f; // Rate at which player accelerates
-    public float maxSpeed = 5f; // Maximum speed of the player
-    public float deceleration = 0.5f; // Rate at which player decelerates
+    [SerializeField] float acceleration;
+    [SerializeField] public float maxSpeed;
+    [SerializeField] float deceleration;
 
     private Rigidbody2D rb;
 
@@ -24,7 +24,7 @@ public class PlayerMovement : MonoBehaviour
         {
             // Rotate towards movement direction
             float angle = Mathf.Atan2(inputVector.y, inputVector.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+            transform.rotation = Quaternion.Euler(0f, 0f, angle - 90f);
 
             // Accelerate in the input direction
             rb.velocity += inputVector * acceleration * Time.deltaTime;

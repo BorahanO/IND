@@ -72,3 +72,5 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 NarrativePoop/Library
 NarrativePoop/Temp
+NarrativePoop/Logs
+NarrativePoop/obj/Debug
